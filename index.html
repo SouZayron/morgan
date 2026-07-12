@@ -87,22 +87,23 @@ body{
 .star-field{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .shooting-star{
   position:absolute;
-  width:120px;height:2px;
+  width:110px;height:2px;
   background:linear-gradient(90deg, transparent, var(--glow) 60%, #fff);
   border-radius:2px;
   opacity:0;
-  transform:rotate(-35deg);
+  transform:rotate(45deg);
+  transform-origin:left center;
   filter:drop-shadow(0 0 4px var(--glow));
   animation-name:shootFall;
   animation-timing-function:ease-in;
   animation-iteration-count:infinite;
 }
 @keyframes shootFall{
-  0%{ transform:translate(0,0) rotate(-35deg); opacity:0; }
-  8%{ opacity:1; }
-  32%{ opacity:1; }
-  40%{ transform:translate(420px,420px) rotate(-35deg); opacity:0; }
-  100%{ transform:translate(420px,420px) rotate(-35deg); opacity:0; }
+  0%{ transform:translate(0,0) rotate(45deg); opacity:0; }
+  8%{ transform:translate(30px,30px) rotate(45deg); opacity:1; }
+  32%{ transform:translate(260px,260px) rotate(45deg); opacity:1; }
+  40%{ transform:translate(340px,340px) rotate(45deg); opacity:0; }
+  100%{ transform:translate(340px,340px) rotate(45deg); opacity:0; }
 }
 
 /* ============================================================
@@ -110,7 +111,7 @@ body{
    ============================================================ */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:flex-end;
   padding:18px 42px;
   background:var(--card);
   backdrop-filter:blur(var(--blur));
@@ -122,7 +123,11 @@ nav{
   background:linear-gradient(90deg,var(--primary),var(--secondary));
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.menu{display:flex;gap:6px;list-style:none;}
+.menu{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  display:flex;gap:6px;list-style:none;
+}
 .menu li button{
   font-family:'Inter',sans-serif;font-weight:500;font-size:14.5px;
   background:none;border:none;color:var(--text-2);cursor:pointer;
@@ -162,7 +167,8 @@ nav{
 }
 .photo-wrap{display:flex;justify-content:center;align-items:center;perspective:1200px;}
 .photo-frame{
-  position:relative;width:min(320px,80%);aspect-ratio:1/1.1;
+  position:relative;width:min(480px,120%);aspect-ratio:1/1.15;
+  margin:-10px 0 -10px -30px;
   animation:photoFloat 5s ease-in-out infinite;
 }
 @keyframes photoFloat{
@@ -299,6 +305,7 @@ footer.mini{
   .panel{position:relative;top:0;padding:20px 6vw 90px;}
   .panel.active{display:flex;}
   #home .panel-inner{grid-template-columns:1fr;text-align:center;gap:20px;}
+  .photo-frame{width:min(300px,80%);margin:0 auto;}
   .info-col{align-items:center;}
   .bio{max-width:100%;}
   .friends-grid{grid-template-columns:repeat(2,1fr);}
@@ -459,7 +466,7 @@ if(nameEl){
    ESTRELAS CADENTES (poucas, caindo na diagonal)
    ============================================================ */
 const starField = document.getElementById('starField');
-const STAR_COUNT = 5;
+const STAR_COUNT = 2;
 for(let i=0;i<STAR_COUNT;i++){
   const star = document.createElement('div');
   star.className = 'shooting-star';
