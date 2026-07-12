@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lady Morgan — Perfil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS — troque aqui as cores e a foto para reaproveitar
+   Tema padrão: ESCURO (o claro fica disponível no botão do topo)
+   ============================================================ */
+:root{
+  --bg:#0C0A14;
+  --bg-alt:#120F1E;
+  --primary:#7B2CFF;
+  --secondary:#A45CFF;
+  --glow:#C28DFF;
+  --text:#F3F1FA;
+  --text-2:#A79FC2;
+  --card:rgba(30,24,48,.5);
+  --card-solid:rgba(30,24,48,.75);
+  --card-border:rgba(150,110,255,.22);
+  --shadow:0 20px 60px rgba(123,44,255,.35);
+  --radius:34px;
+  --blur:20px;
+  --online:#2ECC71;
+  --away:#F5C242;
+  --offline:#E15554;
+}
+body.light{
+  --bg:#F7F7FA;
+  --bg-alt:#EFEEFA;
+  --text:#222222;
+  --text-2:#707070;
+  --card:rgba(255,255,255,.45);
+  --card-solid:rgba(255,255,255,.7);
+  --card-border:rgba(255,255,255,.6);
+  --shadow:0 20px 60px rgba(123,44,255,.14);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden; /* site em blocos — sem rolagem da página */
+  position:relative;
+  transition:background .5s ease,color .5s ease;
+}
+
+/* ============================================================
+   FUNDO — grid discreto + partículas + glow do mouse
+   ============================================================ */
+.bg-grid{
+  position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(var(--card-border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--card-border) 1px,transparent 1px);
+  background-size:52px 52px;
+  opacity:.35;
+  mask-image:radial-gradient(circle at 50% 40%,black 10%,transparent 75%);
+}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.cursor-glow{
+  position:fixed;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,var(--glow) 0%,transparent 70%);
+  opacity:.22;pointer-events:none;z-index:0;
+  transform:translate(-50%,-50%);
+  transition:opacity .3s ease;
+  filter:blur(10px);
+}
+.blob{
+  position:fixed;border-radius:50%;filter:blur(60px);z-index:0;pointer-events:none;
+  opacity:.35;animation:float 10s ease-in-out infinite;
+}
+.blob-1{width:280px;height:280px;background:var(--primary);top:-80px;left:-80px;}
+.blob-2{width:220px;height:220px;background:var(--secondary);bottom:-60px;right:-60px;animation-delay:2s;}
+@keyframes float{
+  0%,100%{transform:translateY(0) translateX(0);}
+  50%{transform:translateY(-25px) translateX(15px);}
+}
+
+/* ---------- Estrelas cadentes ---------- */
+.star-field{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.shooting-star{
+  position:absolute;
+  width:120px;height:2px;
+  background:linear-gradient(90deg, transparent, var(--glow) 60%, #fff);
+  border-radius:2px;
+  opacity:0;
+  transform:rotate(-35deg);
+  filter:drop-shadow(0 0 4px var(--glow));
+  animation-name:shootFall;
+  animation-timing-function:ease-in;
+  animation-iteration-count:infinite;
+}
+@keyframes shootFall{
+  0%{ transform:translate(0,0) rotate(-35deg); opacity:0; }
+  8%{ opacity:1; }
+  32%{ opacity:1; }
+  40%{ transform:translate(420px,420px) rotate(-35deg); opacity:0; }
+  100%{ transform:translate(420px,420px) rotate(-35deg); opacity:0; }
+}
+
+/* ============================================================
+   NAV FIXA
+   ============================================================ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 42px;
+  background:var(--card);
+  backdrop-filter:blur(var(--blur));
+  -webkit-backdrop-filter:blur(var(--blur));
+  border-bottom:1px solid var(--card-border);
+}
+.logo{
+  font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.menu{display:flex;gap:6px;list-style:none;}
+.menu li button{
+  font-family:'Inter',sans-serif;font-weight:500;font-size:14.5px;
+  background:none;border:none;color:var(--text-2);cursor:pointer;
+  padding:9px 18px;border-radius:20px;transition:all .3s ease;
+}
+.menu li button:hover{color:var(--text);}
+.menu li button.active{
+  color:#fff;background:linear-gradient(90deg,var(--primary),var(--secondary));
+  box-shadow:0 6px 20px rgba(123,44,255,.35);
+}
+.theme-toggle{
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--card-border);
+  background:var(--card-solid);color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition:transform .3s ease;
+}
+.theme-toggle:hover{transform:rotate(20deg) scale(1.05);}
+
+/* ============================================================
+   ESTRUTURA DE PAINÉIS — cada bloco ocupa a tela, sem scroll
+   ============================================================ */
+.stage{position:relative;z-index:5;height:100vh;padding-top:78px;}
+.panel{
+  position:absolute;inset:0;top:78px;
+  display:none;
+  padding:26px 6vw 22px;
+  opacity:0;transform:translateY(18px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+.panel.active{display:flex;opacity:1;transform:translateY(0);}
+.panel-inner{width:100%;margin:auto;}
+
+/* ---------- HOME ---------- */
+#home .panel-inner{
+  display:grid;grid-template-columns:.85fr 1.15fr;gap:5vw;
+  align-items:center;height:100%;max-width:1300px;
+}
+.photo-wrap{display:flex;justify-content:center;align-items:center;perspective:1200px;}
+.photo-frame{
+  position:relative;width:min(320px,80%);aspect-ratio:1/1.1;
+  animation:photoFloat 5s ease-in-out infinite;
+}
+@keyframes photoFloat{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-14px); }
+}
+.photo-glow{
+  position:absolute;inset:-30px;border-radius:44px;
+  background:radial-gradient(circle,var(--glow) 0%,transparent 70%);
+  opacity:.55;filter:blur(20px);z-index:0;animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:.7;}}
+.photo-card{
+  position:relative;z-index:1;width:100%;height:100%;border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--card-border);
+  transition:transform .15s ease-out;
+  background:linear-gradient(160deg,var(--primary),var(--secondary));
+}
+.photo-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.status-chip{
+  position:absolute;bottom:16px;left:16px;z-index:2;
+  display:flex;align-items:center;gap:7px;
+  background:var(--card-solid);backdrop-filter:blur(var(--blur));
+  padding:7px 14px;border-radius:20px;border:1px solid var(--card-border);
+  font-size:12.5px;font-weight:600;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--online);box-shadow:0 0 8px var(--online);}
+
+.info-col{display:flex;flex-direction:column;gap:14px;}
+.name-xl{
+  position:relative;
+  display:flex;flex-wrap:wrap;
+  font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(30px,4.2vw,54px);
+  line-height:1.02;letter-spacing:-1px;
+  color:var(--text);
+  width:fit-content;
+}
+.name-xl .letter{
+  display:inline-block;
+  animation:letterFloat 3.2s ease-in-out infinite;
+  white-space:pre;
+}
+@keyframes letterFloat{
+  0%,100%{
+    transform:translateY(0);
+    text-shadow:0 0 16px rgba(123,44,255,.32),0 0 32px rgba(164,92,255,.16);
+  }
+  50%{
+    transform:translateY(-9px);
+    text-shadow:0 0 30px rgba(123,44,255,.8),0 0 56px rgba(194,141,255,.55);
+  }
+}
+.role{
+  font-size:14px;font-weight:600;color:var(--secondary);letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.bio{font-size:15px;line-height:1.55;color:var(--text-2);max-width:500px;}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+.glass-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 18px;border-radius:16px;border:1px solid var(--card-border);
+  background:var(--card);backdrop-filter:blur(var(--blur));
+  color:var(--text);text-decoration:none;font-size:13.5px;font-weight:600;
+  transition:all .25s ease;
+}
+.glass-btn:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(123,44,255,.25);border-color:var(--primary);}
+.glass-btn svg{width:16px;height:16px;}
+
+/* ---------- FRIENDS ---------- */
+.panel-title{
+  font-family:'Poppins',sans-serif;font-weight:700;font-size:26px;margin-bottom:4px;
+}
+.panel-sub{color:var(--text-2);font-size:13.5px;margin-bottom:20px;}
+#friends .panel-inner{max-width:1200px;margin:auto;}
+.friends-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.friend-card{
+  background:var(--card);backdrop-filter:blur(var(--blur));
+  border:1px solid var(--card-border);border-radius:22px;
+  padding:16px 10px;text-align:center;
+  transition:transform .3s ease, box-shadow .3s ease;
+  cursor:pointer;
+}
+.friend-card:hover{transform:translateY(-8px) scale(1.05);box-shadow:var(--shadow);}
+.friend-avatar{
+  position:relative;width:64px;height:64px;margin:0 auto 10px;border-radius:50%;
+  background:linear-gradient(160deg,var(--primary),var(--secondary));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Poppins',sans-serif;font-weight:700;color:#fff;font-size:20px;
+  overflow:hidden;
+}
+.friend-avatar img{width:100%;height:100%;object-fit:cover;}
+.friend-avatar .dot{position:absolute;bottom:2px;right:2px;border:2px solid var(--bg);}
+.friend-name{font-size:13.5px;font-weight:600;}
+
+/* ============================================================
+   PLAYER DA RÁDIO (fixo, discreto)
+   ============================================================ */
+.player{
+  position:fixed;bottom:20px;left:20px;z-index:60;
+  display:flex;align-items:center;gap:10px;
+  background:var(--card-solid);backdrop-filter:blur(var(--blur));
+  border:1px solid var(--card-border);border-radius:18px;padding:9px 14px;
+  box-shadow:var(--shadow);
+}
+.player button{
+  width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(160deg,var(--primary),var(--secondary));color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;
+}
+.player .bars{display:flex;align-items:flex-end;gap:2px;height:16px;}
+.player .bars span{width:3px;background:var(--primary);border-radius:2px;height:4px;}
+.player.is-playing .bars span{animation:eq 1s ease-in-out infinite;}
+.player .bars span:nth-child(2){animation-delay:.2s;}
+.player .bars span:nth-child(3){animation-delay:.4s;}
+@keyframes eq{0%,100%{height:4px;}50%{height:15px;}}
+.player .track{font-size:11.5px;line-height:1.2;}
+.player .track b{display:block;font-size:12px;}
+.player .track span{color:var(--text-2);}
+
+footer.mini{
+  position:fixed;bottom:14px;right:26px;z-index:40;
+  font-size:11.5px;color:var(--text-2);
+}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width:980px){
+  body{overflow-y:auto;}
+  .stage{height:auto;}
+  .panel{position:relative;top:0;padding:20px 6vw 90px;}
+  .panel.active{display:flex;}
+  #home .panel-inner{grid-template-columns:1fr;text-align:center;gap:20px;}
+  .info-col{align-items:center;}
+  .bio{max-width:100%;}
+  .friends-grid{grid-template-columns:repeat(2,1fr);}
+  .menu{display:none;}
+  nav{padding:14px 20px;}
+  .player{left:12px;bottom:12px;}
+  footer.mini{display:none;}
+}
+</style>
+</head>
+<body class="dark">
+
+<div class="bg-grid"></div>
+<div class="star-field" id="starField"></div>
+<canvas id="particles"></canvas>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- NAV -->
+<nav>
+  <ul class="menu" id="menu">
+    <li><button data-panel="home" class="active">Home</button></li>
+    <li><button data-panel="friends">Friends</button></li>
+  </ul>
+  <button class="theme-toggle" id="themeToggle" title="Alternar tema">☀️</button>
+</nav>
+
+<div class="stage">
+
+  <!-- HOME -->
+  <section class="panel active" id="home">
+    <div class="panel-inner">
+      <div class="photo-wrap">
+        <div class="photo-frame" id="tiltFrame">
+          <div class="photo-glow"></div>
+          <div class="photo-card">
+            <img src="https://xatimg.com/image/bAlYFUU0Dnxr.png" alt="Foto de Lady Morgan">
+          </div>
+          <div class="status-chip"><span class="dot"></span> Online agora</div>
+        </div>
+      </div>
+
+      <div class="info-col">
+        <h1 class="name-xl" id="typedName">LADY MORGAN</h1>
+        <div class="role">PSI • EXÉRCITO • LOCUTORA NAS HORAS VAGAS</div>
+        <p class="bio">Nasci na França, mas foi no Brasil que encontrei uma parte do meu coração que nem sabia que existia. Sou apaixonada pela energia, pelo calor humano, pelos sorrisos sinceros. Acredito que a vida fica mais bonita quando é vivida com gentileza, respeito e muito amor. Meu coração sempre terá espaço para novos lugares, novas histórias e pessoas que fazem a diferença. 🇫🇷❤️🇧🇷</p>
+
+        <div class="btn-row">
+          <a class="glass-btn" href="https://instagram.com/radioaltavibe" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c2.7 0 3 0 4.1.06 1.1.05 1.8.22 2.2.36.55.2.95.45 1.36.86.4.4.66.8.86 1.36.15.4.31 1.1.36 2.2.06 1.2.06 1.5.06 4.1s0 2.9-.06 4.1c-.05 1.1-.21 1.8-.36 2.2-.2.55-.46.95-.86 1.36-.41.4-.81.66-1.36.86-.4.15-1.1.31-2.2.36-1.2.06-1.5.06-4.1.06s-2.9 0-4.1-.06c-1.1-.05-1.8-.21-2.2-.36a3.7 3.7 0 0 1-1.36-.86 3.7 3.7 0 0 1-.86-1.36c-.15-.4-.31-1.1-.36-2.2C2.2 14.9 2.2 14.6 2.2 12s0-2.9.06-4.1c.05-1.1.21-1.8.36-2.2.2-.55.46-.96.86-1.36.41-.41.81-.67 1.36-.86.4-.15 1.1-.31 2.2-.36C8.1 2.2 8.4 2.2 12 2.2Zm0 1.8c-2.6 0-2.9 0-3.9.06-.95.04-1.46.2-1.8.33-.45.17-.78.38-1.12.72-.33.34-.54.66-.72 1.12-.13.34-.29.85-.33 1.8-.05 1-.06 1.3-.06 3.9s0 2.9.06 3.9c.04.95.2 1.46.33 1.8.18.45.4.78.72 1.12.34.33.67.54 1.12.72.34.13.85.29 1.8.33 1 .05 1.3.06 3.9.06s2.9 0 3.9-.06c.95-.04 1.46-.2 1.8-.33.45-.18.78-.4 1.12-.72.33-.34.54-.67.72-1.12.13-.34.29-.85.33-1.8.05-1 .06-1.3.06-3.9s0-2.9-.06-3.9c-.04-.95-.2-1.46-.33-1.8a2.9 2.9 0 0 0-.72-1.12 2.9 2.9 0 0 0-1.12-.72c-.34-.13-.85-.29-1.8-.33-1-.05-1.3-.06-3.9-.06Zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 1.8a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2Zm5.1-2a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg>
+            Instagram
+          </a>
+          <a class="glass-btn" href="https://www.facebook.com/share/1BGynprZnY/" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.4 21v-7.6h2.6l.4-3h-3v-1.9c0-.87.24-1.46 1.5-1.46h1.6V4.3c-.28-.04-1.22-.12-2.32-.12-2.3 0-3.88 1.4-3.88 3.98v2.22H7.2v3h2.62V21Z"/></svg>
+            Facebook
+          </a>
+          <a class="glass-btn" href="https://www.youtube.com/@radioaltavibe" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 15.5 15.5 12 10 8.5v7ZM21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.6.5a2.8 2.8 0 0 0-2 2C2 8.9 2 12 2 12s0 3.1.4 4.8a2.8 2.8 0 0 0 2 2c1.7.5 7.6.5 7.6.5s5.9 0 7.6-.5a2.8 2.8 0 0 0 2-2c.4-1.7.4-4.8.4-4.8s0-3.1-.4-4.8Z"/></svg>
+            YouTube
+          </a>
+          <a class="glass-btn" href="https://www.tiktok.com/@radioaltavibe" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 2h-3.2v13.4a2.9 2.9 0 1 1-2.05-2.77v-3.3a6.2 6.2 0 1 0 5.25 6.13V8.6a7.9 7.9 0 0 0 4.6 1.47V6.85A4.6 4.6 0 0 1 16.6 2Z"/></svg>
+            TikTok
+          </a>
+          <a class="glass-btn" href="https://altavibe.com.br/" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3a15.6 15.6 0 0 0-1.3-4A8.03 8.03 0 0 1 18.9 8ZM12 4.1c.8 1.1 1.5 2.4 1.9 3.9h-3.8c.4-1.5 1.1-2.8 1.9-3.9ZM4.3 14a8 8 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4H4.3Zm.8 2h3a15.6 15.6 0 0 0 1.3 4A8.03 8.03 0 0 1 5.1 16Zm3-8H5.1a8.03 8.03 0 0 1 4.3-4A15.6 15.6 0 0 0 8.1 8ZM12 19.9c-.8-1.1-1.5-2.4-1.9-3.9h3.8c-.4 1.5-1.1 2.8-1.9 3.9ZM10.6 14a14.6 14.6 0 0 1 0-4h2.8a14.6 14.6 0 0 1 0 4h-2.8Zm3.4 5.9c.5-1.2 1-2.5 1.3-4h3a8.03 8.03 0 0 1-4.3 4ZM16.3 14a16.5 16.5 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4Z"/></svg>
+            Website
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FRIENDS -->
+  <section class="panel" id="friends">
+    <div class="panel-inner">
+      <h2 class="panel-title">Melhores Amigos</h2>
+      <p class="panel-sub">As pessoas que caminharam comigo nessa jornada</p>
+      <div class="friends-grid" id="friendsGrid"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- PLAYER DA RÁDIO -->
+<div class="player" id="radioPlayer">
+  <button id="playBtn">▶</button>
+  <div class="bars"><span></span><span></span><span></span></div>
+  <div class="track"><b>Rádio Alta Vibe</b><span id="radioSub">Ao vivo</span></div>
+</div>
+<audio id="radioAudio" preload="none" src="https://hts07.brascast.com:7130/live"></audio>
+
+<footer class="mini">© 2026 · Lady Morgan · Feito por <a href="https://xat.com/altavibe" target="_blank" style="color:var(--primary);text-decoration:none;">Enigm4tico</a></footer>
+
+<script>
+/* ============================================================
+   DADOS — edite aqui os amigos (nome, foto opcional e status)
+   status: "online" | "away" | "offline"
+   ============================================================ */
+const friends = [
+  {name:"Dani",       photo:"https://xatimg.com/image/onbrw59RbPXW.png", status:"online"},
+  {name:"Off",        letter:"O",                                         status:"online"},
+  {name:"Khels",      photo:"https://xatimg.com/image/NaJvFXL4TMEa.png", status:"online"},
+  {name:"Breh",       letter:"B",                                         status:"online"},
+  {name:"Enigm4tico", photo:"https://xatimg.com/image/6qZyQZ2Eg9B1.png", status:"online"},
+];
+
+/* ============================================================
+   NAVEGAÇÃO POR PAINÉIS (site em blocos, sem rolagem)
+   ============================================================ */
+const buttons = document.querySelectorAll('.menu button');
+const panels = document.querySelectorAll('.panel');
+buttons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    buttons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    panels.forEach(p=>p.classList.remove('active'));
+    document.getElementById(btn.dataset.panel).classList.add('active');
+  });
+});
+
+/* ============================================================
+   RENDER: amigos
+   ============================================================ */
+const friendsGrid = document.getElementById('friendsGrid');
+friends.forEach(f=>{
+  const card = document.createElement('div');
+  card.className = 'friend-card';
+  const avatarContent = f.photo
+    ? `<img src="${f.photo}" alt="${f.name}">`
+    : (f.letter || f.name[0]);
+  card.innerHTML = `
+    <div class="friend-avatar">${avatarContent}
+      <span class="dot" style="background:var(--${f.status});box-shadow:0 0 6px var(--${f.status})"></span>
+    </div>
+    <div class="friend-name">${f.name}</div>`;
+  friendsGrid.appendChild(card);
+});
+
+/* ============================================================
+   LETRAS ANIMADAS DO NOME
+   ============================================================ */
+const nameEl = document.getElementById('typedName');
+if(nameEl){
+  const text = nameEl.textContent.trim();
+  nameEl.textContent = '';
+  [...text].forEach((ch, i)=>{
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.textContent = ch === ' ' ? '\u00A0' : ch;
+    span.style.animationDelay = (i * 0.07) + 's';
+    nameEl.appendChild(span);
+  });
+}
+
+/* ============================================================
+   ESTRELAS CADENTES (poucas, caindo na diagonal)
+   ============================================================ */
+const starField = document.getElementById('starField');
+const STAR_COUNT = 5;
+for(let i=0;i<STAR_COUNT;i++){
+  const star = document.createElement('div');
+  star.className = 'shooting-star';
+  star.style.top = (Math.random()*50) + '%';
+  star.style.left = (Math.random()*70) + '%';
+  star.style.animationDuration = (5 + Math.random()*4) + 's';
+  star.style.animationDelay = (Math.random()*10) + 's';
+  starField.appendChild(star);
+}
+
+/* ============================================================
+   TILT 3D NA FOTO
+   ============================================================ */
+const tiltFrame = document.getElementById('tiltFrame');
+const photoCard = tiltFrame.querySelector('.photo-card');
+tiltFrame.addEventListener('mousemove', e=>{
+  const r = tiltFrame.getBoundingClientRect();
+  const x = (e.clientX - r.left)/r.width - .5;
+  const y = (e.clientY - r.top)/r.height - .5;
+  photoCard.style.transform = `rotateY(${x*14}deg) rotateX(${-y*14}deg) translateY(-6px)`;
+});
+tiltFrame.addEventListener('mouseleave', ()=>{ photoCard.style.transform = 'rotateY(0) rotateX(0)'; });
+
+/* ============================================================
+   GLOW SEGUINDO O MOUSE
+   ============================================================ */
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', e=>{
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+/* ============================================================
+   PARTÍCULAS FLUTUANTES
+   ============================================================ */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+for(let i=0;i<50;i++){
+  particles.push({
+    x:Math.random()*W, y:Math.random()*H,
+    r:Math.random()*2+.6,
+    vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
+    o:Math.random()*.5+.15
+  });
+}
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  const isLight = document.body.classList.contains('light');
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>W)p.vx*=-1;
+    if(p.y<0||p.y>H)p.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = isLight ? `rgba(123,44,255,${p.o})` : `rgba(194,141,255,${p.o})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ============================================================
+   TEMA — padrão ESCURO, com opção de clarear
+   ============================================================ */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', ()=>{
+  document.body.classList.toggle('light');
+  themeToggle.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+});
+
+/* ============================================================
+   PLAYER DA RÁDIO ALTA VIBE (stream real)
+   ============================================================ */
+const radioAudio = document.getElementById('radioAudio');
+const playBtn = document.getElementById('playBtn');
+const radioPlayer = document.getElementById('radioPlayer');
+const radioSub = document.getElementById('radioSub');
+let playing = false;
+
+playBtn.addEventListener('click', ()=>{
+  if(!playing){
+    radioSub.textContent = 'Conectando...';
+    radioAudio.play().then(()=>{
+      playing = true;
+      playBtn.textContent = '❚❚';
+      radioPlayer.classList.add('is-playing');
+      radioSub.textContent = 'Ao vivo';
+    }).catch(()=>{
+      radioSub.textContent = 'Erro ao conectar';
+    });
+  } else {
+    radioAudio.pause();
+    playing = false;
+    playBtn.textContent = '▶';
+    radioPlayer.classList.remove('is-playing');
+    radioSub.textContent = 'Pausado';
+  }
+});
+radioAudio.addEventListener('waiting', ()=>{ radioSub.textContent = 'Carregando...'; });
+radioAudio.addEventListener('playing', ()=>{ radioSub.textContent = 'Ao vivo'; });
+radioAudio.addEventListener('error', ()=>{ radioSub.textContent = 'Sem sinal'; });
+</script>
+</body>
+</html>
