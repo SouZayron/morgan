@@ -165,15 +165,21 @@ nav{
   display:grid;grid-template-columns:.85fr 1.15fr;gap:5vw;
   align-items:center;height:100%;max-width:1300px;
 }
-.photo-wrap{display:flex;justify-content:center;align-items:center;perspective:1200px;}
-.photo-frame{
-  position:relative;width:min(480px,120%);aspect-ratio:1/1.15;
-  margin:-10px 0 -10px -30px;
+.photo-wrap{
+  position:relative;display:flex;justify-content:center;align-items:center;
   animation:photoFloat 5s ease-in-out infinite;
 }
 @keyframes photoFloat{
   0%,100%{ transform:translateY(0); }
   50%{ transform:translateY(-14px); }
+}
+.photo-frame{
+  position:relative;width:min(300px,70%);aspect-ratio:1/1.15;
+  border-radius:var(--radius);
+  background:var(--card);backdrop-filter:blur(var(--blur));
+  border:1px solid var(--card-border);box-shadow:var(--shadow);
+  transition:transform .25s ease-out;
+  will-change:transform;
 }
 .photo-glow{
   position:absolute;inset:-30px;border-radius:44px;
@@ -182,16 +188,22 @@ nav{
 }
 @keyframes pulse{0%,100%{opacity:.4;}50%{opacity:.7;}}
 .photo-card{
-  position:relative;z-index:1;width:100%;height:100%;border-radius:var(--radius);
-  overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--card-border);
-  transition:transform .15s ease-out;
-  background:linear-gradient(160deg,var(--primary),var(--secondary));
+  position:absolute;z-index:2;
+  top:-14%;left:-22%;right:-22%;bottom:-14%;
+  transition:transform .25s ease-out;
+  will-change:transform;
+  pointer-events:none;
 }
-.photo-card img{width:100%;height:100%;object-fit:cover;display:block;}
-.status-chip{
-  position:absolute;bottom:16px;left:16px;z-index:2;
+.photo-card img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  -webkit-mask-image:radial-gradient(ellipse 58% 58% at center,#000 48%,transparent 88%);
+  mask-image:radial-gradient(ellipse 58% 58% at center,#000 48%,transparent 88%);
+  filter:drop-shadow(0 10px 30px rgba(123,44,255,.35));
+}
+.status-chip-top{
+  align-self:flex-start;
   display:flex;align-items:center;gap:7px;
-  background:var(--card-solid);backdrop-filter:blur(var(--blur));
+  background:var(--card);backdrop-filter:blur(var(--blur));
   padding:7px 14px;border-radius:20px;border:1px solid var(--card-border);
   font-size:12.5px;font-weight:600;
 }
@@ -305,7 +317,7 @@ footer.mini{
   .panel{position:relative;top:0;padding:20px 6vw 90px;}
   .panel.active{display:flex;}
   #home .panel-inner{grid-template-columns:1fr;text-align:center;gap:20px;}
-  .photo-frame{width:min(300px,80%);margin:0 auto;}
+  .photo-frame{width:min(240px,70%);}
   .info-col{align-items:center;}
   .bio{max-width:100%;}
   .friends-grid{grid-template-columns:repeat(2,1fr);}
@@ -339,17 +351,17 @@ footer.mini{
   <!-- HOME -->
   <section class="panel active" id="home">
     <div class="panel-inner">
-      <div class="photo-wrap">
-        <div class="photo-frame" id="tiltFrame">
+      <div class="photo-wrap" id="parallaxWrap">
+        <div class="photo-frame" id="parallaxFrame">
           <div class="photo-glow"></div>
-          <div class="photo-card">
-            <img src="https://xatimg.com/image/bAlYFUU0Dnxr.png" alt="Foto de Lady Morgan">
-          </div>
-          <div class="status-chip"><span class="dot"></span> Online agora</div>
+        </div>
+        <div class="photo-card" id="parallaxImage">
+          <img src="https://xatimg.com/image/yT1dj0ZCpkBL.png" alt="Foto de Lady Morgan">
         </div>
       </div>
 
       <div class="info-col">
+        <div class="status-chip-top"><span class="dot"></span> Online agora</div>
         <h1 class="name-xl" id="typedName">LADY MORGAN</h1>
         <div class="role">PSI • EXÉRCITO • LOCUTORA NAS HORAS VAGAS</div>
         <p class="bio">Nasci na França, mas foi no Brasil que encontrei uma parte do meu coração que nem sabia que existia. Sou apaixonada pela energia, pelo calor humano, pelos sorrisos sinceros. Acredito que a vida fica mais bonita quando é vivida com gentileza, respeito e muito amor. Meu coração sempre terá espaço para novos lugares, novas histórias e pessoas que fazem a diferença. 🇫🇷❤️🇧🇷</p>
@@ -480,15 +492,20 @@ for(let i=0;i<STAR_COUNT;i++){
 /* ============================================================
    TILT 3D NA FOTO
    ============================================================ */
-const tiltFrame = document.getElementById('tiltFrame');
-const photoCard = tiltFrame.querySelector('.photo-card');
-tiltFrame.addEventListener('mousemove', e=>{
-  const r = tiltFrame.getBoundingClientRect();
+const parallaxWrap = document.getElementById('parallaxWrap');
+const parallaxFrame = document.getElementById('parallaxFrame');
+const parallaxImage = document.getElementById('parallaxImage');
+parallaxWrap.addEventListener('mousemove', e=>{
+  const r = parallaxWrap.getBoundingClientRect();
   const x = (e.clientX - r.left)/r.width - .5;
   const y = (e.clientY - r.top)/r.height - .5;
-  photoCard.style.transform = `rotateY(${x*14}deg) rotateX(${-y*14}deg) translateY(-6px)`;
+  parallaxFrame.style.transform = `translate(${x*18}px, ${y*18}px)`;
+  parallaxImage.style.transform = `translate(${-x*34}px, ${-y*34}px) scale(1.06)`;
 });
-tiltFrame.addEventListener('mouseleave', ()=>{ photoCard.style.transform = 'rotateY(0) rotateX(0)'; });
+parallaxWrap.addEventListener('mouseleave', ()=>{
+  parallaxFrame.style.transform = 'translate(0,0)';
+  parallaxImage.style.transform = 'translate(0,0) scale(1)';
+});
 
 /* ============================================================
    GLOW SEGUINDO O MOUSE
