@@ -270,6 +270,7 @@ nav{
 .friend-avatar img{width:100%;height:100%;object-fit:cover;}
 .friend-avatar .dot{position:absolute;bottom:2px;right:2px;border:2px solid var(--bg);}
 .friend-name{font-size:13.5px;font-weight:600;}
+.friend-id{font-size:11px;color:var(--text-2);margin-top:2px;letter-spacing:.3px;}
 
 /* ============================================================
    PLAYER DA RÁDIO (fixo, discreto)
@@ -349,7 +350,7 @@ footer.mini{
           <div class="photo-glow"></div>
         </div>
         <div class="photo-card" id="parallaxImage">
-          <img src="https://xatimg.com/image/yT1dj0ZCpkBL.png" alt="Foto de Lady Morgan">
+          <img src="https://xatimg.com/image/T4IEPDHXOwbL.png" alt="Foto de Lady Morgan">
         </div>
       </div>
 
@@ -412,11 +413,12 @@ footer.mini{
    status: "online" | "away" | "offline"
    ============================================================ */
 const friends = [
-  {name:"Dani",       photo:"https://xatimg.com/image/onbrw59RbPXW.png", status:"online"},
-  {name:"Off",        letter:"O",                                         status:"online"},
-  {name:"Khels",      photo:"https://xatimg.com/image/NaJvFXL4TMEa.png", status:"online"},
-  {name:"Breh",       letter:"B",                                         status:"online"},
-  {name:"Enigm4tico", photo:"https://xatimg.com/image/6qZyQZ2Eg9B1.png", status:"online"},
+  {name:"Dani",       photo:"https://xatimg.com/image/onbrw59RbPXW.png", status:"online", id:"1464444002"},
+  {name:"Off",        letter:"O",                                         status:"online", id:"982438617"},
+  {name:"Khels",      photo:"https://xatimg.com/image/NaJvFXL4TMEa.png", status:"online", id:"10001010"},
+  {name:"Breh",       letter:"B",                                         status:"online", id:"408963075"},
+  {name:"Enigm4tico", photo:"https://xatimg.com/image/6qZyQZ2Eg9B1.png", status:"online", id:"1491244179"},
+  {name:"Theuz",      photo:"https://xatimg.com/image/m0jxYl9h9xPP.png", status:"online", id:"106823856"},
 ];
 
 /* ============================================================
@@ -447,7 +449,8 @@ friends.forEach(f=>{
     <div class="friend-avatar">${avatarContent}
       <span class="dot" style="background:var(--${f.status});box-shadow:0 0 6px var(--${f.status})"></span>
     </div>
-    <div class="friend-name">${f.name}</div>`;
+    <div class="friend-name">${f.name}</div>
+    <div class="friend-id">${f.id}</div>`;
   friendsGrid.appendChild(card);
 });
 
