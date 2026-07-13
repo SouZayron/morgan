@@ -303,6 +303,56 @@ footer.mini{
 }
 
 /* ============================================================
+   PAINEL ADMIN
+   ============================================================ */
+.admin-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(6,4,14,.68);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.admin-overlay.active{display:flex;}
+.admin-panel{
+  width:100%;max-width:460px;max-height:82vh;overflow-y:auto;
+  background:var(--card-solid);backdrop-filter:blur(var(--blur));
+  border:1px solid var(--card-border);border-radius:26px;
+  padding:22px;box-shadow:var(--shadow);
+}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.admin-header h3{font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;}
+.admin-close{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--card-border);
+  background:transparent;color:var(--text);font-size:18px;cursor:pointer;
+}
+.admin-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;max-height:220px;overflow-y:auto;}
+.admin-empty{font-size:13px;color:var(--text-2);}
+.admin-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--card);border:1px solid var(--card-border);border-radius:14px;
+  padding:9px 12px;
+}
+.admin-row-info{display:flex;flex-direction:column;font-size:12.5px;}
+.admin-row-info b{font-size:13.5px;}
+.admin-row-info span{color:var(--text-2);font-size:11px;}
+.admin-remove{
+  background:rgba(225,85,84,.15);border:1px solid rgba(225,85,84,.4);
+  color:#E15554;padding:6px 12px;border-radius:10px;font-size:12px;cursor:pointer;
+  flex:none;
+}
+.admin-form{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--card-border);padding-top:16px;}
+.admin-form-title{font-size:13px;color:var(--text-2);font-weight:600;margin-bottom:2px;}
+.admin-form input,.admin-form select{
+  width:100%;padding:10px 14px;border-radius:12px;
+  border:1px solid var(--card-border);background:var(--card);color:var(--text);
+  font-family:'Inter',sans-serif;font-size:13.5px;outline:none;
+}
+.admin-form input::placeholder{color:var(--text-2);}
+.admin-add-btn{
+  padding:11px;border-radius:12px;border:none;cursor:pointer;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  color:#fff;font-weight:700;font-size:14px;
+}
+
+/* ============================================================
    RESPONSIVO
    ============================================================ */
 @media (max-width:980px){
@@ -405,21 +455,64 @@ footer.mini{
 </div>
 <audio id="radioAudio" preload="none" src="https://hts07.brascast.com:7130/live"></audio>
 
-<footer class="mini">© 2026 · Lady Morgan · Feito por <a href="https://xat.com/altavibe" target="_blank" style="color:var(--primary);text-decoration:none;">Enigm4tico</a></footer>
+<footer class="mini">© 2026 · Lady Morgan · Feito por <a href="https://xat.com/altavibe" target="_blank" style="color:var(--primary);text-decoration:none;">Enigm4tico</a> <button id="adminGearBtn" title="Painel de amigos" style="background:none;border:none;color:var(--text-2);cursor:pointer;font-size:12px;margin-left:6px;opacity:.55;vertical-align:middle;">⚙</button></footer>
+
+<!-- PAINEL ADMIN — acesse com #admin na URL ou pela engrenagem no rodapé -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <h3>Painel de Amigos</h3>
+      <button type="button" id="adminClose" class="admin-close">×</button>
+    </div>
+
+    <div class="admin-list" id="adminList"></div>
+
+    <form class="admin-form" id="adminForm">
+      <p class="admin-form-title">Adicionar amigo</p>
+      <input type="text" id="fName" placeholder="Nome" required>
+      <input type="url" id="fPhoto" placeholder="Link da foto (deixe vazio para usar uma letra)">
+      <input type="text" id="fLetter" placeholder="Letra do avatar (se não tiver foto)" maxlength="2">
+      <input type="text" id="fId" placeholder="ID">
+      <select id="fStatus">
+        <option value="online">Online</option>
+        <option value="away">Ausente</option>
+        <option value="offline">Offline</option>
+      </select>
+      <button type="submit" class="admin-add-btn">Adicionar</button>
+    </form>
+  </div>
+</div>
 
 <script>
 /* ============================================================
    DADOS — edite aqui os amigos (nome, foto opcional e status)
    status: "online" | "away" | "offline"
    ============================================================ */
-const friends = [
+const DEFAULT_FRIENDS = [
   {name:"Dani",       photo:"https://xatimg.com/image/onbrw59RbPXW.png", status:"online", id:"1464444002"},
-  {name:"Off",        letter:"O",                                         status:"online", id:"982438617"},
+  {name:"Off",        photo:"https://xatimg.com/image/0k1L3yRM37Oh.png", status:"online", id:"982438617"},
   {name:"Khels",      photo:"https://xatimg.com/image/NaJvFXL4TMEa.png", status:"online", id:"10001010"},
   {name:"Breh",       letter:"B",                                         status:"online", id:"408963075"},
   {name:"Enigm4tico", photo:"https://xatimg.com/image/6qZyQZ2Eg9B1.png", status:"online", id:"1491244179"},
   {name:"Theuz",      photo:"https://xatimg.com/image/m0jxYl9h9xPP.png", status:"online", id:"106823856"},
 ];
+
+/* ============================================================
+   PERSISTÊNCIA — os amigos ficam salvos no navegador (localStorage)
+   depois de qualquer alteração feita pelo painel /admin
+   ============================================================ */
+const FRIENDS_STORAGE_KEY = 'lm_friends_v1';
+function loadFriends(){
+  try{
+    const raw = localStorage.getItem(FRIENDS_STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return DEFAULT_FRIENDS.slice();
+}
+function saveFriends(){
+  try{ localStorage.setItem(FRIENDS_STORAGE_KEY, JSON.stringify(friends)); }catch(e){}
+}
+let friends = loadFriends();
 
 /* ============================================================
    NAVEGAÇÃO POR PAINÉIS (site em blocos, sem rolagem)
@@ -439,20 +532,98 @@ buttons.forEach(btn=>{
    RENDER: amigos
    ============================================================ */
 const friendsGrid = document.getElementById('friendsGrid');
-friends.forEach(f=>{
-  const card = document.createElement('div');
-  card.className = 'friend-card';
-  const avatarContent = f.photo
-    ? `<img src="${f.photo}" alt="${f.name}">`
-    : (f.letter || f.name[0]);
-  card.innerHTML = `
-    <div class="friend-avatar">${avatarContent}
-      <span class="dot" style="background:var(--${f.status});box-shadow:0 0 6px var(--${f.status})"></span>
-    </div>
-    <div class="friend-name">${f.name}</div>
-    <div class="friend-id">${f.id}</div>`;
-  friendsGrid.appendChild(card);
+function renderFriends(){
+  friendsGrid.innerHTML = '';
+  friends.forEach(f=>{
+    const card = document.createElement('div');
+    card.className = 'friend-card';
+    const avatarContent = f.photo
+      ? `<img src="${f.photo}" alt="${f.name}">`
+      : (f.letter || f.name[0]);
+    card.innerHTML = `
+      <div class="friend-avatar">${avatarContent}
+        <span class="dot" style="background:var(--${f.status});box-shadow:0 0 6px var(--${f.status})"></span>
+      </div>
+      <div class="friend-name">${f.name}</div>
+      <div class="friend-id">${f.id || ''}</div>`;
+    friendsGrid.appendChild(card);
+  });
+}
+renderFriends();
+
+/* ============================================================
+   PAINEL ADMIN — acesse abrindo o site com #admin no final da URL
+   (ex: index.html#admin) ou clicando na engrenagem discreta no rodapé
+   ============================================================ */
+const adminOverlay = document.getElementById('adminOverlay');
+const adminList = document.getElementById('adminList');
+const adminForm = document.getElementById('adminForm');
+
+function renderAdminList(){
+  adminList.innerHTML = '';
+  if(friends.length === 0){
+    adminList.innerHTML = '<p class="admin-empty">Nenhum amigo cadastrado ainda.</p>';
+    return;
+  }
+  friends.forEach((f,i)=>{
+    const row = document.createElement('div');
+    row.className = 'admin-row';
+    row.innerHTML = `
+      <div class="admin-row-info">
+        <b>${f.name}</b>
+        <span>ID: ${f.id || '—'}</span>
+      </div>
+      <button type="button" class="admin-remove" data-i="${i}">Remover</button>`;
+    adminList.appendChild(row);
+  });
+}
+
+adminList.addEventListener('click', e=>{
+  const btn = e.target.closest('.admin-remove');
+  if(!btn) return;
+  const i = +btn.dataset.i;
+  friends.splice(i,1);
+  saveFriends();
+  renderFriends();
+  renderAdminList();
 });
+
+adminForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const photo = document.getElementById('fPhoto').value.trim();
+  const letter = document.getElementById('fLetter').value.trim();
+  const id = document.getElementById('fId').value.trim();
+  const status = document.getElementById('fStatus').value;
+  if(!name) return;
+  friends.push({
+    name,
+    id,
+    status,
+    ...(photo ? {photo} : {letter: letter || name[0]})
+  });
+  saveFriends();
+  renderFriends();
+  renderAdminList();
+  adminForm.reset();
+});
+
+function openAdmin(){
+  adminOverlay.classList.add('active');
+  renderAdminList();
+}
+function closeAdmin(){
+  adminOverlay.classList.remove('active');
+  if(location.hash === '#admin'){
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+}
+document.getElementById('adminClose').addEventListener('click', closeAdmin);
+adminOverlay.addEventListener('click', e=>{ if(e.target === adminOverlay) closeAdmin(); });
+document.getElementById('adminGearBtn').addEventListener('click', openAdmin);
+
+if(location.hash === '#admin') openAdmin();
+window.addEventListener('hashchange', ()=>{ if(location.hash === '#admin') openAdmin(); });
 
 /* ============================================================
    LETRAS ANIMADAS DO NOME
