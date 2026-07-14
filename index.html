@@ -112,7 +112,7 @@ body{
 nav{
   position:fixed;top:0;left:0;right:0;z-index:50;
   display:flex;align-items:center;justify-content:flex-end;
-  padding:18px 42px;
+  padding:14px 42px 56px;
   background:var(--card);
   backdrop-filter:blur(var(--blur));
   -webkit-backdrop-filter:blur(var(--blur));
@@ -124,8 +124,8 @@ nav{
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .menu{
-  position:absolute;left:50%;top:50%;
-  transform:translate(-50%,-50%);
+  position:absolute;left:50%;top:74px;
+  transform:translateX(-50%);
   display:flex;gap:6px;list-style:none;
 }
 .menu li button{
@@ -149,9 +149,9 @@ nav{
 /* ============================================================
    ESTRUTURA DE PAINÉIS — cada bloco ocupa a tela, sem scroll
    ============================================================ */
-.stage{position:relative;z-index:5;height:100vh;padding-top:78px;}
+.stage{position:relative;z-index:5;height:100vh;padding-top:118px;}
 .panel{
-  position:absolute;inset:0;top:78px;
+  position:absolute;inset:0;top:118px;
   display:none;
   padding:26px 6vw 22px;
   opacity:0;transform:translateY(18px);
